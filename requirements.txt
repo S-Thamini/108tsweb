@@ -1,1 +1,0 @@
-# Dependencies moved to replit.nix to support immutable deployment
