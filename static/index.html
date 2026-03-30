@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>108TS Premium Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+    <div class="background-effects">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+    </div>
+
+    <div class="glass-container">
+        <header>
+            <h1>108TS <span class="highlight">Pro</span></h1>
+            <p>Automated Trading Journal Synchronization</p>
+        </header>
+
+        <form id="sync-form">
+            <div class="section-title"><i class="ri-calendar-line"></i> Market Coordinates</div>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label for="index">Index</label>
+                    <select name="index" id="index">
+                        <option value="NIFTY">NIFTY 50</option>
+                        <option value="BANKNIFTY">BANKNIFTY</option>
+                        <option value="FINNIFTY">FINNIFTY</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="data_date">Data Date</label>
+                    <input type="date" name="data_date" id="data_date" required>
+                </div>
+                <div class="input-group">
+                    <label for="expiry">Expiry Date</label>
+                    <input type="date" name="expiry" id="expiry" required>
+                </div>
+            </div>
+
+            <div class="section-title"><i class="ri-file-excel-line"></i> Template Settings</div>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label for="template_name">Master Tab Name</label>
+                    <input type="text" name="template_name" id="template_name" value="Nifty50">
+                </div>
+                <div class="input-group">
+                    <div class="label-with-toggle">
+                        <label for="target_sh">Target Sheet Name</label>
+                        <label class="toggle-container">
+                            <span class="toggle-label">Dynamic</span>
+                            <input type="checkbox" name="dynamic_name" id="dynamic_name" checked>
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                    <input type="text" name="target_sh" id="target_sh" value="Sheet1" disabled>
+                </div>
+            </div>
+
+            <div class="section-title"><i class="ri-focus-3-line"></i> Structure Matrix</div>
+            <div class="form-grid">
+                <div class="input-group">
+                    <div class="label-with-toggle">
+                        <label for="mid_strike">Mid Strike</label>
+                        <label class="toggle-container">
+                            <span class="toggle-label">Auto ATM</span>
+                            <input type="checkbox" name="auto_mid" id="auto_mid" checked>
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                    <input type="number" name="mid_strike" id="mid_strike" value="24000" disabled>
+                </div>
+                <div class="input-group">
+                    <label for="rows">Grid Rows (+/-)</label>
+                    <input type="number" name="rows" id="rows" value="3">
+                </div>
+                <div class="input-group">
+                    <label for="gap">Strike Gap</label>
+                    <input type="number" name="gap" id="gap" value="50">
+                </div>
+            </div>
+
+            <button type="submit" id="sync-btn">
+                <i class="ri-loop-right-line" id="btn-icon"></i>
+                <span class="btn-text" id="btn-text">Synchronize & Download</span>
+            </button>
+        </form>
+        
+        <div id="status-container" class="status-container hidden">
+            <div class="status-icon"><i class="ri-check-line"></i></div>
+            <div class="status-message" id="status-message">Ready.</div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

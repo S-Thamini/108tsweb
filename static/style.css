@@ -1,0 +1,296 @@
+:root {
+    --bg-primary: #0a0a0b;
+    --bg-glass: rgba(25, 25, 28, 0.6);
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --text-primary: #ffffff;
+    --text-secondary: #8892b0;
+    --accent: #3b82f6;
+    --accent-glow: rgba(59, 130, 246, 0.4);
+    --accent-hover: #2563eb;
+    --success: #10b981;
+    --error: #ef4444;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Background Gradients */
+.background-effects {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.15;
+}
+
+.glow-1 {
+    top: -100px;
+    left: -100px;
+    background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+}
+
+.glow-2 {
+    bottom: -100px;
+    right: -100px;
+    background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
+}
+
+/* Glass Container */
+.glass-container {
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-glass);
+    border-radius: 24px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 680px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.6s ease-out;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+}
+
+.highlight {
+    color: var(--accent);
+    text-shadow: 0 0 20px var(--accent-glow);
+}
+
+header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* Form Styles */
+.section-title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin: 1.5rem 0 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-title i {
+    font-size: 1.1rem;
+    color: var(--accent);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.label-with-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+input:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+input:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Custom Checkbox Toggle */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: var(--accent);
+    user-select: none;
+}
+
+.toggle-container input {
+    display: none;
+}
+
+.checkmark {
+    width: 28px;
+    height: 16px;
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    position: relative;
+    transition: 0.3s;
+}
+
+.checkmark::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: white;
+    top: 2px;
+    left: 2px;
+    transition: 0.3s;
+}
+
+.toggle-container input:checked ~ .checkmark {
+    background-color: var(--accent);
+}
+
+.toggle-container input:checked ~ .checkmark::after {
+    left: 14px;
+}
+
+/* Button */
+button {
+    width: 100%;
+    margin-top: 2rem;
+    padding: 1rem;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent), #2563eb);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 10px 20px -10px var(--accent-glow);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px -10px var(--accent-glow);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button:disabled {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.3);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* Status Banner */
+.status-container {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: var(--success);
+    font-size: 0.9rem;
+    animation: fadeIn 0.3s ease;
+}
+
+.status-container.hidden {
+    display: none;
+}
+
+.status-container.error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
+    color: var(--error);
+}
+
+.status-container.error .status-icon {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+.status-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(16, 185, 129, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
