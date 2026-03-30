@@ -26,54 +26,59 @@ document.addEventListener("DOMContentLoaded", () => {
         
         Object.keys(inputs).forEach(key => {
             const input = inputs[key];
+            if (!input) return; // Null check
+            
             if (saved[key] !== undefined) {
                 if (input.type === "checkbox") {
                     input.checked = saved[key];
                 } else {
                     input.value = saved[key];
                 }
+            } else {
+                // Apply hardcoded defaults if NO saved value for this SPECIFIC key
+                if (key === "data_date") {
+                    input.value = new Date().toISOString().split('T')[0];
+                } else if (key === "expiry") {
+                    const d = new Date();
+                    d.setDate(d.getDate() + (4 + 7 - d.getDay()) % 7);
+                    input.value = d.toISOString().split('T')[0];
+                }
             }
         });
 
-        // Apply initial disabled states based on checkboxes
-        inputs.target_sh.disabled = inputs.dynamic_name.checked;
-        inputs.mid_strike.disabled = inputs.auto_mid.checked;
+        // Apply visual UI states based on loaded data
+        if (inputs.target_sh) inputs.target_sh.disabled = !!inputs.dynamic_name?.checked;
+        if (inputs.mid_strike) inputs.mid_strike.disabled = !!inputs.auto_mid?.checked;
     }
 
     function saveCurrentData() {
         const data = {};
         Object.keys(inputs).forEach(key => {
             const input = inputs[key];
+            if (!input) return;
             data[key] = (input.type === "checkbox") ? input.checked : input.value;
         });
         localStorage.setItem("108ts_prefs", JSON.stringify(data));
+        console.log("Progress Saved Successfully.");
     }
 
-    // Initialize Dates if NOT saved
-    if (!localStorage.getItem("108ts_prefs")) {
-        const today = new Date();
-        inputs.data_date.value = today.toISOString().split('T')[0];
-        
-        const d = new Date();
-        d.setDate(d.getDate() + (4 + 7 - d.getDay()) % 7);
-        inputs.expiry.value = d.toISOString().split('T')[0];
-    } else {
-        loadSavedData();
-    }
+    // Always run loadSavedData - it handles both saved values and smarter defaults
+    loadSavedData();
 
-    // Attach Save Listeners to ALL inputs
+    // Attach Save Listeners
     Object.values(inputs).forEach(input => {
+        if (!input) return;
         input.addEventListener("input", saveCurrentData);
         input.addEventListener("change", saveCurrentData);
     });
 
-    // Special Toggle Handlers for UI
-    inputs.dynamic_name.addEventListener("change", (e) => {
-        inputs.target_sh.disabled = e.target.checked;
+    // Special Toggle Handlers for UI (Dynamic behaviors)
+    inputs.dynamic_name?.addEventListener("change", (e) => {
+        if (inputs.target_sh) inputs.target_sh.disabled = e.target.checked;
     });
 
-    inputs.auto_mid.addEventListener("change", (e) => {
-        inputs.mid_strike.disabled = e.target.checked;
+    inputs.auto_mid?.addEventListener("change", (e) => {
+        if (inputs.mid_strike) inputs.mid_strike.disabled = e.target.checked;
     });
 
     // Form Submit
@@ -87,10 +92,8 @@ document.addEventListener("DOMContentLoaded", () => {
         statusContainer.classList.add("hidden");
 
         const formData = new FormData(form);
-        
-        // Ensure disabled values are sent (FormData ignores disabled inputs)
-        if (inputs.dynamic_name.checked) formData.set("target_sh", "Dynamic");
-        if (inputs.auto_mid.checked) formData.set("mid_strike", "0");
+        if (inputs.dynamic_name?.checked) formData.set("target_sh", "Dynamic");
+        if (inputs.auto_mid?.checked) formData.set("mid_strike", "0");
 
         try {
             const response = await fetch("/api/sync", {
@@ -99,18 +102,14 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             const result = await response.json();
-
             if (response.ok) {
                 showStatus("Success! " + result.message, "success");
-                
-                // Trigger Download automatically
                 const downloadLink = document.createElement("a");
                 downloadLink.href = result.download_url;
                 downloadLink.setAttribute("download", "");
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
-                
                 showStatus("File Downloaded Successfully. You can open it in Excel.", "success");
             } else {
                 throw new Error(result.detail || "An error occurred during sync.");
@@ -118,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             showStatus(error.message, "error");
         } finally {
-            // Restore UI
             btn.disabled = false;
             btnIcon.className = "ri-loop-right-line";
             btnText.innerText = "Synchronize & Download";
