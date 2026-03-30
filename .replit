@@ -1,4 +1,4 @@
-run = "python3 -m venv .venv && .venv/bin/pip install -r requirements.txt && .venv/bin/python3 main.py"
+run = "python3 -m uvicorn main:app --host 0.0.0.0 --port 8080"
 entrypoint = "main.py"
 
 [packager]
@@ -8,4 +8,4 @@ language = "python3"
 channel = "stable-23_11"
 
 [deployment]
-run = ["bash", "-c", "python3 -m venv .venv && .venv/bin/pip install -r requirements.txt && .venv/bin/python3 main.py"]
+run = ["python3", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
