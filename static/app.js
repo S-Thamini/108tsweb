@@ -1,13 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Inputs
-    const dynamicNameCheck = document.getElementById("dynamic_name");
-    const targetShInput = document.getElementById("target_sh");
-    
-    const autoMidCheck = document.getElementById("auto_mid");
-    const midStrikeInput = document.getElementById("mid_strike");
-
-    const dataDateInput = document.getElementById("data_date");
-    const expiryInput = document.getElementById("expiry");
+    const inputs = {
+        index: document.getElementById("index"),
+        data_date: document.getElementById("data_date"),
+        expiry: document.getElementById("expiry"),
+        template_name: document.getElementById("template_name"),
+        dynamic_name: document.getElementById("dynamic_name"),
+        target_sh: document.getElementById("target_sh"),
+        auto_mid: document.getElementById("auto_mid"),
+        mid_strike: document.getElementById("mid_strike"),
+        rows: document.getElementById("rows"),
+        gap: document.getElementById("gap")
+    };
 
     // UI elements
     const form = document.getElementById("sync-form");
@@ -17,22 +20,60 @@ document.addEventListener("DOMContentLoaded", () => {
     const statusContainer = document.getElementById("status-container");
     const statusMessage = document.getElementById("status-message");
 
-    // Initialize Dates
-    const today = new Date();
-    dataDateInput.value = today.toISOString().split('T')[0];
-    
-    // Find next Thursday
-    const d = new Date();
-    d.setDate(d.getDate() + (4 + 7 - d.getDay()) % 7);
-    expiryInput.value = d.toISOString().split('T')[0];
+    // 1. Initial State / Auto-Saves
+    function loadSavedData() {
+        const saved = JSON.parse(localStorage.getItem("108ts_prefs") || "{}");
+        
+        Object.keys(inputs).forEach(key => {
+            const input = inputs[key];
+            if (saved[key] !== undefined) {
+                if (input.type === "checkbox") {
+                    input.checked = saved[key];
+                } else {
+                    input.value = saved[key];
+                }
+            }
+        });
 
-    // Toggle Handlers
-    dynamicNameCheck.addEventListener("change", (e) => {
-        targetShInput.disabled = e.target.checked;
+        // Apply initial disabled states based on checkboxes
+        inputs.target_sh.disabled = inputs.dynamic_name.checked;
+        inputs.mid_strike.disabled = inputs.auto_mid.checked;
+    }
+
+    function saveCurrentData() {
+        const data = {};
+        Object.keys(inputs).forEach(key => {
+            const input = inputs[key];
+            data[key] = (input.type === "checkbox") ? input.checked : input.value;
+        });
+        localStorage.setItem("108ts_prefs", JSON.stringify(data));
+    }
+
+    // Initialize Dates if NOT saved
+    if (!localStorage.getItem("108ts_prefs")) {
+        const today = new Date();
+        inputs.data_date.value = today.toISOString().split('T')[0];
+        
+        const d = new Date();
+        d.setDate(d.getDate() + (4 + 7 - d.getDay()) % 7);
+        inputs.expiry.value = d.toISOString().split('T')[0];
+    } else {
+        loadSavedData();
+    }
+
+    // Attach Save Listeners to ALL inputs
+    Object.values(inputs).forEach(input => {
+        input.addEventListener("input", saveCurrentData);
+        input.addEventListener("change", saveCurrentData);
     });
 
-    autoMidCheck.addEventListener("change", (e) => {
-        midStrikeInput.disabled = e.target.checked;
+    // Special Toggle Handlers for UI
+    inputs.dynamic_name.addEventListener("change", (e) => {
+        inputs.target_sh.disabled = e.target.checked;
+    });
+
+    inputs.auto_mid.addEventListener("change", (e) => {
+        inputs.mid_strike.disabled = e.target.checked;
     });
 
     // Form Submit
@@ -48,8 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const formData = new FormData(form);
         
         // Ensure disabled values are sent (FormData ignores disabled inputs)
-        if (dynamicNameCheck.checked) formData.set("target_sh", "Dynamic");
-        if (autoMidCheck.checked) formData.set("mid_strike", "0");
+        if (inputs.dynamic_name.checked) formData.set("target_sh", "Dynamic");
+        if (inputs.auto_mid.checked) formData.set("mid_strike", "0");
 
         try {
             const response = await fetch("/api/sync", {
